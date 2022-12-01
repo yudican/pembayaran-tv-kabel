@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Auth;
 
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
@@ -38,10 +39,12 @@ class Register extends Component
         $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
-
             'password' => Hash::make($this->password)
         ]);
 
+        $team = Team::find(1);
+        $team->users()->attach($user, ['role' => 'member']);
+        $user->roles()->attach('0feb7d3a-90c0-42b9-be3f-63757088cb9a');
 
         $this->_resetForm();
         event(new Registered($user));
