@@ -19,13 +19,17 @@ class PaymentTable extends LivewireDatatable
 
     public function builder()
     {
-        return Payment::query();
+        $user = auth()->user();
+        if ($user->role->role_type == 'member') {
+            return Payment::query()->where('user_id', $user->id);
+        }
     }
 
     public function columns()
     {
         return [
             Column::name('id')->label('No.'),
+            Column::name('user.name')->label('Pelanggan')->searchable(),
             Column::name('payment_amount')->label('Jumlah Pembayaran')->searchable(),
             Column::name('payment_date')->label('Tanggal Pembayaran')->searchable(),
             Column::callback(['payment_image'], function ($image) {
@@ -46,7 +50,7 @@ class PaymentTable extends LivewireDatatable
                 return '<span class="badge badge-warning">Menunggu Konfirmasi</span>';
             })->label('Status Pembayaran')->searchable(),
             Column::name('product.nama_product')->label('Pilihan Produk')->searchable(),
-            Column::name('user_id')->label('Pelanggan')->searchable(),
+
 
             Column::callback(['id'], function ($id) {
                 return view('crud-generator-components::action-button', [
