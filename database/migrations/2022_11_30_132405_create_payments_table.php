@@ -16,11 +16,10 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->string('payment_method')->nullable();
+            $table->foreignId('payment_method')->nullable();
             $table->char('payment_status', 1)->nullable(); // 0 = pending, 1 = success, 2 = failed
             $table->string('payment_amount')->nullable();
-            $table->string('payment_date')->nullable();
+            $table->string('priode')->nullable();
             $table->string('payment_image')->nullable();
             $table->timestamps();
         });

@@ -2,19 +2,21 @@
 
 namespace App\Http\Livewire\Master;
 
-use App\Models\Banner;
+use App\Models\Keluhan;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class BannerController extends Component
+class KeluhanController extends Component
 {
     use WithFileUploads;
-    public $banner_id;
-    public $image;
-    public $status;
-    public $title;
-    public $image_path;
+    public $keluhan_id;
+    public $pelanggan;
+    public $user_id;
+    public $judul_keluhan;
+    public $isi_keluhan;
+    public $gambar;
+    public $gambar_path;
 
 
     public $route_name = null;
@@ -24,7 +26,7 @@ class BannerController extends Component
     public $update_mode = false;
     public $modal = false;
 
-    protected $listeners = ['getDataBannerById', 'getBannerId'];
+    protected $listeners = ['getDataKeluhanById', 'getKeluhanId'];
 
     public function mount()
     {
@@ -33,20 +35,21 @@ class BannerController extends Component
 
     public function render()
     {
-        return view('livewire.master.banner')->layout(config('crud-generator.layout'));
+        return view('livewire.master.keluhan')->layout(config('crud-generator.layout'));
     }
 
     public function store()
     {
         $this->_validate();
-        $image = $this->image_path->store('upload', 'public');
+        $gambar = $this->gambar_path->store('upload', 'public');
         $data = [
-            'image'  => $image,
-            'status'  => $this->status,
-            'title'  => $this->title
+            'user_id'  => auth()->user()->id,
+            'judul_keluhan'  => $this->judul_keluhan,
+            'isi_keluhan'  => $this->isi_keluhan,
+            'gambar'  => $gambar
         ];
 
-        Banner::create($data);
+        Keluhan::create($data);
 
         $this->_reset();
         return $this->emit('showAlert', ['msg' => 'Data Berhasil Disimpan']);
@@ -57,17 +60,17 @@ class BannerController extends Component
         $this->_validate();
 
         $data = [
-            'status'  => $this->status,
-            'title'  => $this->title
+            'judul_keluhan'  => $this->judul_keluhan,
+            'isi_keluhan'  => $this->isi_keluhan,
         ];
-        $row = Banner::find($this->banner_id);
+        $row = Keluhan::find($this->keluhan_id);
 
 
-        if ($this->image_path) {
-            $image = $this->image_path->store('upload', 'public');
-            $data = ['image' => $image];
-            if (Storage::exists('public/' . $this->image)) {
-                Storage::delete('public/' . $this->image);
+        if ($this->gambar_path) {
+            $gambar = $this->gambar_path->store('upload', 'public');
+            $data = ['gambar' => $gambar];
+            if (Storage::exists('public/' . $this->gambar)) {
+                Storage::delete('public/' . $this->gambar);
             }
         }
 
@@ -79,7 +82,7 @@ class BannerController extends Component
 
     public function delete()
     {
-        Banner::find($this->banner_id)->delete();
+        Keluhan::find($this->keluhan_id)->delete();
 
         $this->_reset();
         return $this->emit('showAlert', ['msg' => 'Data Berhasil Dihapus']);
@@ -88,21 +91,23 @@ class BannerController extends Component
     public function _validate()
     {
         $rule = [
-            'status'  => 'required',
-            'title'  => 'required'
+            'judul_keluhan'  => 'required',
+            'isi_keluhan'  => 'required'
         ];
 
         return $this->validate($rule);
     }
 
-    public function getDataBannerById($banner_id)
+    public function getDataKeluhanById($keluhan_id)
     {
         $this->_reset();
-        $row = Banner::find($banner_id);
-        $this->banner_id = $row->id;
-        $this->image = $row->image;
-        $this->status = $row->status;
-        $this->title = $row->title;
+        $row = Keluhan::find($keluhan_id);
+        $this->keluhan_id = $row->id;
+        $this->user_id = $row->user_id;
+        $this->pelanggan = $row->user?->name ?? '-';
+        $this->judul_keluhan = $row->judul_keluhan;
+        $this->isi_keluhan = $row->isi_keluhan;
+        $this->gambar = $row->gambar;
         if ($this->form) {
             $this->form_active = true;
             $this->emit('loadForm');
@@ -113,10 +118,10 @@ class BannerController extends Component
         $this->update_mode = true;
     }
 
-    public function getBannerId($banner_id)
+    public function getKeluhanId($keluhan_id)
     {
-        $row = Banner::find($banner_id);
-        $this->banner_id = $row->id;
+        $row = Keluhan::find($keluhan_id);
+        $this->keluhan_id = $row->id;
     }
 
     public function toggleForm($form)
@@ -136,11 +141,13 @@ class BannerController extends Component
     {
         $this->emit('closeModal');
         $this->emit('refreshTable');
-        $this->banner_id = null;
-        $this->image_path = null;
-        $this->image = null;
-        $this->status = null;
-        $this->title = null;
+        $this->keluhan_id = null;
+        $this->user_id = null;
+        $this->pelanggan = null;
+        $this->judul_keluhan = null;
+        $this->isi_keluhan = null;
+        $this->gambar = null;
+        $this->gambar_path = null;
         $this->form = true;
         $this->form_active = false;
         $this->update_mode = false;

@@ -2,10 +2,8 @@
 
 namespace App\Http\Livewire\Table;
 
-use App\Models\HideableColumn;
 use App\Models\MetodePembayaran;
 use App\Models\Payment;
-use Mediconesystems\LivewireDatatables\BooleanColumn;
 use Mediconesystems\LivewireDatatables\Column;
 use Yudican\LaravelCrudGenerator\Livewire\Table\LivewireDatatable;
 
@@ -23,6 +21,8 @@ class PaymentTable extends LivewireDatatable
         if ($user->role->role_type == 'member') {
             return Payment::query()->where('user_id', $user->id);
         }
+
+        return Payment::query();
     }
 
     public function columns()
@@ -31,7 +31,7 @@ class PaymentTable extends LivewireDatatable
             Column::name('id')->label('No.'),
             Column::name('user.name')->label('Pelanggan')->searchable(),
             Column::name('payment_amount')->label('Jumlah Pembayaran')->searchable(),
-            Column::name('payment_date')->label('Tanggal Pembayaran')->searchable(),
+            Column::name('priode')->label('Priode Pembayaran')->searchable(),
             Column::callback(['payment_image'], function ($image) {
                 return view('livewire.components.photo', [
                     'image_url' => asset('storage/' . $image),
@@ -49,7 +49,6 @@ class PaymentTable extends LivewireDatatable
                 }
                 return '<span class="badge badge-warning">Menunggu Konfirmasi</span>';
             })->label('Status Pembayaran')->searchable(),
-            Column::name('product.nama_product')->label('Pilihan Produk')->searchable(),
 
 
             Column::callback(['id'], function ($id) {

@@ -5,7 +5,7 @@
                 <div class="card-body">
                     <h4 class="card-title text-capitalize">
                         <a href="{{route('dashboard')}}">
-                            <span><i class="fas fa-arrow-left mr-3"></i>payments</span>
+                            <span><i class="fas fa-arrow-left mr-3"></i>keluhan</span>
                         </a>
                         <div class="pull-right">
                             @if ($form_active)
@@ -25,40 +25,18 @@
             @if ($form_active)
             <div class="card">
                 <div class="card-body">
-
                     @if (auth()->user()->role->role_type == 'admin')
                     <x-text-field type="text" name="pelanggan" label="Nama Pelanggan" readonly />
                     @endif
-                    <x-select name="priode" label="Priode Pembayaran">
-                        <option value="">Select Priode Pembayaran</option>
-                        <option value="Januari">Januari</option>
-                        <option value="Februari">Februari</option>
-                        <option value="Maret">Maret</option>
-                        <option value="April">April</option>
-                        <option value="Mei">Mei</option>
-                        <option value="Juni">Juni</option>
-                        <option value="Juli">Juli</option>
-                        <option value="Agustus">Agustus</option>
-                        <option value="September">September</option>
-                        <option value="Oktober">Oktober</option>
-                        <option value="November">November</option>
-                        <option value="Desember">Desember</option>
-                    </x-select>
-                    <x-text-field type="number" name="payment_amount" label="Jumlah Pembayaran" />
-                    <x-input-photo foto="{{$payment_image}}" path="{{optional($payment_image_path)->temporaryUrl()}}" name="payment_image_path" label="Bukti Pembayaran" />
-                    <x-select name="payment_method" label="Metode Pembayaran">
-                        <option value="">Select Metode Pembayaran</option>
-                        @foreach ($payments as $item)
-                        <option value="{{$item->id}}">{{$item->nama_bank_pembayaran}} - {{$item->nomor_rekening}} ({{$item->nama_rekening}})</option>
-                        @endforeach
-                    </x-select>
-                    @if (auth()->user()->role->role_type == 'admin')
-                    <x-select name="payment_status" label="Status Pembayaran">
-                        <option value="">Select Status Pembayaran</option>
-                        <option value="1">Diterima</option>
-                        <option value="2">Ditolak</option>
-                    </x-select>
-                    @endif
+                    <x-text-field type="text" name="judul_keluhan" label="Judul Keluhan" />
+                    <div wire:ignore class="form-group @error('isi_keluhan')has-error has-feedback @enderror">
+                        <label for="isi_keluhan" class="text-capitalize">Isi Keluhan</label>
+                        <textarea wire:model="isi_keluhan" id="isi_keluhan" class="form-control"></textarea>
+                        @error('isi_keluhan')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    <x-input-image foto="{{$gambar}}" path="{{optional($gambar_path)->temporaryUrl()}}" name="gambar_path" label="Gambar" />
 
                     <div class="form-group">
                         <button class="btn btn-primary pull-right" wire:click="{{$update_mode ? 'update' : 'store'}}">Simpan</button>
@@ -66,7 +44,7 @@
                 </div>
             </div>
             @else
-            <livewire:table.payment-table params="{{$route_name}}" />
+            <livewire:table.keluhan-table params="{{$route_name}}" />
             @endif
 
         </div>
@@ -90,22 +68,28 @@
         </div>
     </div>
     @push('scripts')
-
+    <script src="{{asset('assets/js/plugin/summernote/summernote-bs4.min.js')}}"></script>
 
 
     <script>
         document.addEventListener('livewire:load', function(e) {
             window.livewire.on('loadForm', (data) => {
-                
+                $('#isi_keluhan').summernote({
+            placeholder: 'isi_keluhan',
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+            tabsize: 2,
+            height: 300,
+            callbacks: {
+                        onChange: function(contents, $editable) {
+                            @this.set('isi_keluhan', contents);
+                        }
+                    }
+            });
                 
             });
 
             window.livewire.on('closeModal', (data) => {
                 $('#confirm-modal').modal('hide')
-            });
-
-            window.livewire.on('showModalConfirm', (data) => {
-                $('#confirm-modal').modal(data)
             });
         })
     </script>

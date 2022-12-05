@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Master;
 
 use App\Models\MetodePembayaran;
 use App\Models\Payment;
-use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -15,7 +14,7 @@ class PaymentController extends Component
     use WithFileUploads;
     public $payment_id;
     public $payment_amount;
-    public $payment_date;
+    public $priode;
     public $payment_image;
     public $payment_method;
     public $payment_status;
@@ -42,7 +41,6 @@ class PaymentController extends Component
     public function render()
     {
         return view('livewire.master.payment', [
-            'products' => Product::all(),
             'payments' => MetodePembayaran::all(),
         ])->layout(config('crud-generator.layout'));
     }
@@ -53,11 +51,10 @@ class PaymentController extends Component
         $payment_image = $this->payment_image_path->store('upload', 'public');
         $data = [
             'payment_amount'  => $this->payment_amount,
-            'payment_date'  => $this->payment_date,
+            'priode'  => $this->priode,
             'payment_image'  => $payment_image,
             'payment_method'  => $this->payment_method,
             'payment_status'  => $this->payment_status ?? 0,
-            'product_id'  => $this->product_id,
             'user_id'  => Auth::user()->id
         ];
 
@@ -73,10 +70,9 @@ class PaymentController extends Component
 
         $data = [
             'payment_amount'  => $this->payment_amount,
-            'payment_date'  => $this->payment_date,
+            'priode'  => $this->priode,
             'payment_method'  => $this->payment_method,
             'payment_status'  => $this->payment_status,
-            'product_id'  => $this->product_id,
         ];
         $row = Payment::find($this->payment_id);
 
@@ -107,9 +103,8 @@ class PaymentController extends Component
     {
         $rule = [
             'payment_amount'  => 'required',
-            'payment_date'  => 'required',
+            'priode'  => 'required',
             'payment_method'  => 'required',
-            'product_id'  => 'required',
         ];
 
         return $this->validate($rule);
@@ -121,11 +116,10 @@ class PaymentController extends Component
         $row = Payment::find($payment_id);
         $this->payment_id = $row->id;
         $this->payment_amount = $row->payment_amount;
-        $this->payment_date = date('Y-m-d', strtotime($row->payment_date));
+        $this->priode = $row->priode;
         $this->payment_image = $row->payment_image;
         $this->payment_method = $row->payment_method;
         $this->payment_status = $row->payment_status;
-        $this->product_id = $row->product_id;
         $this->user_id = $row->user_id;
         $this->pelanggan = $row->user?->name;
         if ($this->form) {
@@ -163,12 +157,11 @@ class PaymentController extends Component
         $this->emit('refreshTable');
         $this->payment_id = null;
         $this->payment_amount = null;
-        $this->payment_date = null;
+        $this->priode = null;
         $this->payment_image_path = null;
         $this->payment_image = null;
         $this->payment_method = null;
         $this->payment_status = null;
-        $this->product_id = null;
         $this->user_id = null;
         $this->form = true;
         $this->form_active = false;

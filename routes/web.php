@@ -13,6 +13,8 @@ use App\Http\Livewire\Master\BannerController;
 use App\Http\Livewire\Master\ProductController;
 use App\Http\Livewire\Master\PaymentController;
 use App\Http\Livewire\Master\MetodePembayaranController;
+use App\Http\Livewire\Master\KeluhanController;
+use App\Http\Livewire\Doc\PanduanController;
 // [route_import_path]
 
 /*
@@ -47,11 +49,10 @@ Route::group(['middleware' => ['auth:sanctum', 'verified', 'user.authorization']
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
     // Master data
-
-    Route::get('/banner', BannerController::class)->name('master.banner');
-    Route::get('/product', ProductController::class)->name('master.product');
     Route::get('/payment', PaymentController::class)->name('master.payment');
     Route::get('/metode-pembayaran', MetodePembayaranController::class)->name('metode-pembayaran');
+    Route::get('/keluhan', KeluhanController::class)->name('keluhan');
+    Route::get('/panduan', PanduanController::class)->name('panduan');
     // [route_path]
 
 });
