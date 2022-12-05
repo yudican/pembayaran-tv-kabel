@@ -26,7 +26,7 @@ class User extends Component
     public function render()
     {
         return view('livewire.usermanagement.users', [
-            'items' => ModelsUser::where('name', '!=', 'Seper Admin')->get(),
+            'items' => ModelsUser::where('name', '!=', 'Seperadmin')->get(),
             'roles' => Role::all()
         ]);
     }
@@ -97,6 +97,7 @@ class User extends Component
         $this->users_id = $users->id;
         $this->name = $users->name;
         $this->email = $users->email;
+        $this->role_id = $users->role->id;
         if ($this->form) {
             $this->form_active = true;
             $this->emit('loadForm');
