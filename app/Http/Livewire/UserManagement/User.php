@@ -38,11 +38,12 @@ class User extends Component
         $user = ModelsUser::create([
             'name'  => $this->name,
             'email'  => $this->email,
-            'password'  => Hash::make($role_type . '123')
+            'password'  => Hash::make($this->password ? $this->password : 'admin123'),
         ]);
 
         $team = Team::find($this->team_id);
         $team->users()->attach($user, ['role' => $role_type]);
+        $user->roles()->attach($this->role_id);
 
         $this->_reset();
         return $this->emit('showAlert', ['msg' => 'Data Berhasil Disimpan']);
@@ -53,15 +54,20 @@ class User extends Component
         $this->_validate();
         $user = ModelsUser::find($this->users_id);
         $role_type = Role::find($this->role_id)->role_type;
-        $user->update([
+
+        $data = [
             'name'  => $this->name,
             'email'  => $this->email,
-            'password'  => Hash::make($role_type . '123')
-        ]);
+        ];
+        if ($this->password) {
+            $data['password'] = Hash::make($this->password);
+        }
+        $user->update($data);
+
 
         $team = Team::find($this->team_id);
         $team->users()->sync($user, ['role' => $role_type]);
-
+        $user->roles()->sync($this->role_id);
         $this->_reset();
         return $this->emit('showAlert', ['msg' => 'Data Berhasil Diupdate']);
     }
@@ -91,7 +97,6 @@ class User extends Component
         $this->users_id = $users->id;
         $this->name = $users->name;
         $this->email = $users->email;
-        $this->password = $users->password;
         if ($this->form) {
             $this->form_active = true;
             $this->emit('loadForm');
