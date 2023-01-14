@@ -12,6 +12,16 @@
                 </div>
             </div>
         </div>
+
+        @if (in_array(auth()->user()->role->role_type,['admin','superadmin']))
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <embed type="application/pdf" src="{{asset('assets/panduan-admin.pdf')}}" style="width:100%;height:1000px;"></embed>
+                </div>
+            </div>
+        </div>
+        @else
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
@@ -19,5 +29,7 @@
                 </div>
             </div>
         </div>
+        @endif
+
     </div>
 </div>
