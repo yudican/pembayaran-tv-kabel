@@ -48,6 +48,7 @@
                         <option value="">Select Jumlah Pembayaran</option>
                         <option value="30000">30000</option>
                         <option value="50000">50000</option>
+                          <option value="40000">40000</option>
                         <option value="100000">100000</option>
                         <option value="150000">150000</option>
                         <option value="200000">200000</option>
